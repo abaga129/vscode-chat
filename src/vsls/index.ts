@@ -17,6 +17,7 @@ import { VSLS_CHAT_CHANNEL } from "./utils";
 import { VslsHostService } from "./host";
 import { VslsGuestService } from "./guest";
 import { SelfCommands } from "../constants";
+import { VslsSessionTreeProvider } from "../tree/vsls";
 
 const VSLS_CHAT_SERVICE_NAME = "vsls-chat";
 
@@ -26,6 +27,8 @@ export class VslsChatProvider implements IChatProvider {
   serviceProxy: vsls.SharedServiceProxy | undefined;
   hostService: VslsHostService | undefined;
   guestService: VslsGuestService | undefined;
+
+  treeProvider: VslsSessionTreeProvider | undefined;
 
   async connect(): Promise<CurrentUser | undefined> {
     const liveshare = await vsls.getApi();
@@ -84,6 +87,8 @@ export class VslsChatProvider implements IChatProvider {
     const liveshare = <vsls.LiveShare>await vsls.getApi();
     const { role, id: sessionId, peerNumber, user } = liveshare.session;
 
+    this.treeProvider = new VslsSessionTreeProvider();
+
     if (!user || !sessionId) {
       return undefined;
     }
@@ -141,6 +146,10 @@ export class VslsChatProvider implements IChatProvider {
     liveshare.unshareService(VSLS_CHAT_SERVICE_NAME);
     this.sharedService = undefined;
     this.serviceProxy = undefined;
+
+    if (this.treeProvider) {
+      this.treeProvider.dispose();
+    }
   }
 
   isConnected(): boolean {

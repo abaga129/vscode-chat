@@ -27,8 +27,11 @@ export class VslsChatProvider implements IChatProvider {
   serviceProxy: vsls.SharedServiceProxy | undefined;
   hostService: VslsHostService | undefined;
   guestService: VslsGuestService | undefined;
+  treeProvider: VslsSessionTreeProvider;
 
-  treeProvider: VslsSessionTreeProvider | undefined;
+  constructor() {
+    this.treeProvider = new VslsSessionTreeProvider();
+  }
 
   async connect(): Promise<CurrentUser | undefined> {
     const liveshare = await vsls.getApi();
@@ -87,7 +90,7 @@ export class VslsChatProvider implements IChatProvider {
     const liveshare = <vsls.LiveShare>await vsls.getApi();
     const { role, id: sessionId, peerNumber, user } = liveshare.session;
 
-    this.treeProvider = new VslsSessionTreeProvider();
+    this.treeProvider.register();
 
     if (!user || !sessionId) {
       return undefined;

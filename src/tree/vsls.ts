@@ -1,3 +1,4 @@
+import * as vsls from "vsls/vscode";
 import * as vscode from "vscode";
 import { SelfCommands } from "../constants";
 
@@ -9,9 +10,21 @@ export class VslsSessionTreeProvider
   private _disposables: vscode.Disposable[] = [];
 
   constructor() {
-    this._disposables.push(
-      vscode.window.registerTreeDataProvider(LIVE_SHARE_VIEW_ID, this)
-    );
+    // this._disposables.push(
+    //   vscode.window.registerTreeDataProvider(LIVE_SHARE_VIEW_ID, this)
+    // );
+  }
+
+  async register() {
+    const liveshare: any = await vsls.getApi();
+
+    if (!!liveshare) {
+      const disposable = liveshare.registerTreeDataProvider(
+        LIVE_SHARE_VIEW_ID,
+        this
+      );
+      console.log("registered");
+    }
   }
 
   getTreeItem(element: any): vscode.TreeItem | Thenable<vscode.TreeItem> {

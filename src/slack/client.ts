@@ -85,7 +85,12 @@ export const getMessage = (raw: any): ChannelMessages => {
         }))
       : []
   };
-  vscode.window.showWarningMessage(`New Slack message: ${parsed[ts].text}`);
+  const notificationText = `New Slack message: ${parsed[ts].text}`;
+  // let statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+  // statusBar.text = notificationText;
+  
+  vscode.window.showWarningMessage(notificationText);
+  vscode.window.setStatusBarMessage(notificationText);
   return parsed;
 };
 

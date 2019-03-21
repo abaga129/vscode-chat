@@ -2,6 +2,8 @@ import { WebClient, WebClientOptions } from "@slack/client";
 import { ConfigHelper } from "../config";
 import Logger from "../logger";
 import { IDNDStatusForUser } from "./common";
+import * as vscode from 'vscode';
+import * as path from 'path';
 
 interface ISnoozeAPIResponse {
   ok: boolean;
@@ -83,7 +85,12 @@ export const getMessage = (raw: any): ChannelMessages => {
         }))
       : []
   };
-
+  const notificationText = `New Slack message: ${parsed[ts].text}`;
+  // let statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+  // statusBar.text = notificationText;
+  
+  vscode.window.showWarningMessage(notificationText);
+  vscode.window.setStatusBarMessage(notificationText);
   return parsed;
 };
 
